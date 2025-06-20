@@ -25,12 +25,7 @@ endpoint = "https://models.github.ai/inference"
 model = "openai/gpt-4.1-nano"
 
 loader = WebBaseLoader(
-    web_paths=("https://lilianweng.github.io/posts/2017-06-21-overview/",),
-    bs_kwargs=dict(
-        parse_only=bs4.SoupStrainer(
-            class_=("post-content", "post-title", "post-header")
-        )
-    ),
+    web_paths=("https://w.wiki/EXa6",),
 )
 docs = loader.load()
 
@@ -54,12 +49,7 @@ def format_docs(docs):
     print(docs)
     return "\n\n".join(doc.page_content for doc in docs)
 
-
-
-("What is Convolutional Neural Networks?")
-
-
-st.title("Streamlit LangChain Demo")
+st.title("Streamlit LangChain Chatbot: about Kaunas")
 
 def generate_response(input_text):
     llm = ChatOpenAI(base_url=endpoint, temperature=0.7, api_key=token, model=model)
@@ -77,8 +67,7 @@ def generate_response(input_text):
 with st.form("my_form"):
     text = st.text_area(
         "Enter text:",
-        "What are the three key pieces of advice for learning how to code?",
-    )
+        placeholder="Type your question here...",)
     submitted = st.form_submit_button("Submit")
     if submitted:
         generate_response(text)
