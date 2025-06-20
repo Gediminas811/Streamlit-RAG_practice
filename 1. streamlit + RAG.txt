@@ -9,4 +9,12 @@ You two approaches here:
   - You can copy information from wiki into a .txt  or (pdf or .md) file and load it with langchain.
   - You can Scrape information directly from the wiki webpage (or other) and load the data using langchain.
 
+-----------------------------------------------
+
+3. Update your application to display the chunks/sources of information.
+
+example is in samples\streamlit-demo\streamlit-source.py
+
+-----------------------------------------------
+
 
