@@ -11,6 +11,7 @@ from langchain_core.runnables import RunnablePassthrough
 from langchain_core.vectorstores import InMemoryVectorStore
 
 import os
+os.environ["USER_AGENT"] = "Mozilla/5.0 (compatible; MyStreamlitBot/1.0; +https://yourdomain.com/bot)"
 from langchain import hub
 
 from dotenv import load_dotenv
