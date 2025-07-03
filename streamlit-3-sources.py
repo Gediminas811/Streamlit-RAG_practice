@@ -15,7 +15,7 @@ from langchain import hub
 
 from dotenv import load_dotenv
 from langchain_openai.chat_models import ChatOpenAI
-from langchain_community.document_loaders import WebBaseLoader
+from langchain_community.document_loaders import WebBaseLoader, TextLoader
 import bs4  # BeautifulSoup for parsing HTML
 
 load_dotenv()  # take environment variables
@@ -31,8 +31,16 @@ model = "openai/gpt-4.1-nano"
 
 loader = WebBaseLoader(
     web_paths=("https://w.wiki/EXa6", "https://lithuania.travel/en/mice/general-information/locations/mice-cities/kaunas-mice"),
-    )
+)
 docs = loader.load()
+
+# Load TXT file and add to docs
+# Specify encoding to avoid UnicodeDecodeError
+txt_loader = TextLoader("Kaunas-info.txt", encoding="utf-8")
+txt_docs = txt_loader.load()
+for doc in txt_docs:
+    doc.metadata['source'] = 'Kaunas-info.txt'
+docs.extend(txt_docs)
 
 text_splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=10)
 splits = text_splitter.split_documents(docs)
@@ -74,6 +82,8 @@ def generate_response(input_text):
     st.subheader("📚 Information Sources")
     for i, doc in enumerate(fetched_docs, 1):
         with st.expander(f"Source {i}"):
+            source = doc.metadata.get('source', 'Unknown source')
+            st.write(f"**Source:** {source}")
             st.write(f"**Content:** {doc.page_content}")
 
 with st.form("my_form"):
