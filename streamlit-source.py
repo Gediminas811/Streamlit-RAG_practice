@@ -20,6 +20,8 @@ import bs4  # BeautifulSoup for parsing HTML
 
 load_dotenv()  # take environment variables
 
+os.environ["USER_AGENT"] = "Mozilla/5.0 (compatible; MyStreamlitBot/1.0; +https://yourdomain.com/bot)"
+
 # from .env file
 # Load environment variables from .env file
 
@@ -82,4 +84,6 @@ with st.form("my_form"):
     submitted = st.form_submit_button("Submit")
     if submitted:
         generate_response(text)
+
+
 

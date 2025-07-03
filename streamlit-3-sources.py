@@ -1,7 +1,7 @@
 #Chatbot using LangChain and Streamlit
 # This code demonstrates how to retrieve the information sources in 3 chunks
-# and using 3 different sources.
-# Run : streamlit run streamlit-3-sources.py
+# and display them in the Streamlit app.
+# Run : streamlit run streamlit-source.py
 
 from langchain_openai import OpenAIEmbeddings
 from langchain_text_splitters import RecursiveCharacterTextSplitter
@@ -11,15 +11,16 @@ from langchain_core.runnables import RunnablePassthrough
 from langchain_core.vectorstores import InMemoryVectorStore
 
 import os
-os.environ["USER_AGENT"] = "Mozilla/5.0 (compatible; MyStreamlitBot/1.0; +https://yourdomain.com/bot)"
 from langchain import hub
 
 from dotenv import load_dotenv
 from langchain_openai.chat_models import ChatOpenAI
-from langchain_community.document_loaders import WebBaseLoader, PyPDFLoader
+from langchain_community.document_loaders import WebBaseLoader
 import bs4  # BeautifulSoup for parsing HTML
 
 load_dotenv()  # take environment variables
+
+os.environ["USER_AGENT"] = "Mozilla/5.0 (compatible; MyStreamlitBot/1.0; +https://yourdomain.com/bot)"
 
 # from .env file
 # Load environment variables from .env file
@@ -29,16 +30,9 @@ endpoint = "https://models.github.ai/inference"
 model = "openai/gpt-4.1-nano"
 
 loader = WebBaseLoader(
-    web_paths=("https://w.wiki/EXa6","https://www.britannica.com/place/Kaunas"),
+    web_paths=("https://w.wiki/EXa6", "https://lithuania.travel/en/mice/general-information/locations/mice-cities/kaunas-mice"),
     )
 docs = loader.load()
-
-# Load PDF file and add to docs
-pdf_loader = PyPDFLoader("Kaunas-info.pdf")
-pdf_docs = pdf_loader.load()
-for doc in pdf_docs:
-    doc.metadata['source'] = 'Kaunas-info.pdf'
-docs.extend(pdf_docs)
 
 text_splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=10)
 splits = text_splitter.split_documents(docs)
@@ -51,9 +45,7 @@ embeddings=OpenAIEmbeddings(
 
 vectorstore = InMemoryVectorStore(embeddings)
 
-# Add splits to vectorstore one at a time to avoid token limit errors
-for split in splits:
-    vectorstore.add_documents([split])
+_ = vectorstore.add_documents(documents=splits)
 
 retriever = vectorstore.as_retriever(search_kwargs={"k": 3})
 prompt = hub.pull("rlm/rag-prompt")
@@ -79,11 +71,9 @@ def generate_response(input_text):
     result = rag_chain.invoke(input_text)
     st.info(result)
 
-    st.subheader("📚 Sources")
+    st.subheader("📚 Information Sources")
     for i, doc in enumerate(fetched_docs, 1):
         with st.expander(f"Source {i}"):
-            source = doc.metadata.get('source', 'Unknown source')
-            st.write(f"**Source:** {source}")
             st.write(f"**Content:** {doc.page_content}")
 
 with st.form("my_form"):
@@ -94,4 +84,6 @@ with st.form("my_form"):
     submitted = st.form_submit_button("Submit")
     if submitted:
         generate_response(text)
+
+
 

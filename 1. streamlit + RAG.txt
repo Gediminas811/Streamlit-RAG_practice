@@ -17,4 +17,9 @@ example is in samples\streamlit-demo\streamlit-source.py
 
 -----------------------------------------------
 
+4. Please update your 'knowledge base' of your home-town so that it would come from 3 different sources.
+One of the source must be a file.
 
+----------------------------------------------
+
+5. This is your portfolio project and it should be visible in Github.
